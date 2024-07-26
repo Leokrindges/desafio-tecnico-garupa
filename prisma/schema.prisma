@@ -6,3 +6,21 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum StatusTransfer {
+  Processing
+  Completed
+  Failed
+  Pending
+}
+
+model Transfer {
+  id         String         @id @default(uuid()) @db.Uuid
+  externalId String         @map("external_id") @db.Text
+  amount     Float          @db.DoublePrecision
+  expectedOn DateTime?      @map("expected_on") @db.Date
+  status     StatusTransfer @default(Pending)
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamp()
+
+  @@map("transfers")
+}
