@@ -55,7 +55,6 @@ export class TransferController {
   public static async listAl(req: Request, res: Response) {
     try {
       let { limit, page } = req.query;
-      const { id } = req.params;
 
       let limitdDefault = 10;
       let pageDefault = 1;
@@ -65,14 +64,13 @@ export class TransferController {
       }
 
       if (page) {
-        pageDefault = Number(pageDefault);
+        pageDefault = Number(page);
       }
 
       const data = await prismaConnection.transfer.findMany({
         skip: limitdDefault * (pageDefault - 1),
         take: limitdDefault,
         orderBy: { createdAt: "desc" },
-        where: { id: id },
       });
 
       const count = await prismaConnection.transfer.count({});
@@ -105,6 +103,13 @@ export class TransferController {
       const data = await prismaConnection.transfer.findMany({
         where: { id: id },
       });
+
+      if (!data.length) {
+        return res.status(404).json({
+          ok: false,
+          message: "Transferência não encontrada.",
+        });
+      }
 
       const count = await prismaConnection.transfer.count({});
 
