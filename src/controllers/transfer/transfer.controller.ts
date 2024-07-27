@@ -97,4 +97,29 @@ export class TransferController {
       });
     }
   }
+
+  public static async listbyId(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const data = await prismaConnection.transfer.findMany({
+        where: { id: id },
+      });
+
+      const count = await prismaConnection.transfer.count({});
+
+      return res.status(200).json({
+        ok: true,
+        message: "Transferência listada com sucesso.",
+        data,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        ok: false,
+        message: `Ocorreu um erro inesperado. Erro: ${(err as Error).name} - ${
+          (err as Error).message
+        }`,
+      });
+    }
+  }
 }

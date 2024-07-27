@@ -12,10 +12,11 @@ export class TransfersRouts {
       [CreateTransfersMiddleware.validate],
       TransferController.create
     );
+    router.get("/", TransferController.listAl);
     router.get(
-      "/",
+      "/:id",
       [ValidUuidParamsMiddleware.validate],
-      TransferController.listAl
+      TransferController.listbyId
     );
 
     return router;
