@@ -10,10 +10,10 @@ export class TransferController {
 
       const dateFormated = moment(expectedOn, "DD/MM/YYYY");
 
-      const data = await prismaConnection.transfer.create({
+      const newTransfer = await prismaConnection.transfer.create({
         data: {
           externalId,
-          amount: parseFloat(Number(amount).toFixed(2)),
+          amount: amount,
           expectedOn: expectedOn
             ? new Date(dateFormated.format("YYYY-MM-DD"))
             : null,
@@ -22,10 +22,10 @@ export class TransferController {
         },
       });
 
-      const response = await sendToLiquidationPlatform(data);
+      const response = await sendToLiquidationPlatform(newTransfer);
 
-      await prismaConnection.transfer.update({
-        where: { id: data.id },
+      const data = await prismaConnection.transfer.update({
+        where: { id: newTransfer.id },
         data: { status: response.ok ? "Completed" : "Failed" },
       });
 
@@ -41,6 +41,52 @@ export class TransferController {
         ok: true,
         message: `Transferência concluida com sucesso`,
         data,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        ok: false,
+        message: `Ocorreu um erro inesperado. Erro: ${(err as Error).name} - ${
+          (err as Error).message
+        }`,
+      });
+    }
+  }
+
+  public static async listAl(req: Request, res: Response) {
+    try {
+      let { limit, page } = req.query;
+      const { id } = req.params;
+
+      let limitdDefault = 10;
+      let pageDefault = 1;
+
+      if (limit) {
+        limitdDefault = Number(limit);
+      }
+
+      if (page) {
+        pageDefault = Number(pageDefault);
+      }
+
+      const data = await prismaConnection.transfer.findMany({
+        skip: limitdDefault * (pageDefault - 1),
+        take: limitdDefault,
+        orderBy: { createdAt: "desc" },
+        where: { id: id },
+      });
+
+      const count = await prismaConnection.transfer.count({});
+
+      return res.status(200).json({
+        ok: true,
+        message: "Transferências listadas com sucesso.",
+        data,
+        pagination: {
+          limit: limitdDefault,
+          page: pageDefault,
+          count: count,
+          totalPages: Math.ceil(count / limitdDefault),
+        },
       });
     } catch (err) {
       return res.status(500).json({
