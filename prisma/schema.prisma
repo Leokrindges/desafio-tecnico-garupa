@@ -14,6 +14,11 @@ enum StatusTransfer {
   Pending
 }
 
+enum Type {
+  Entrada
+  Saida
+}
+
 model Transfer {
   id         String         @id @default(uuid()) @db.Uuid
   externalId String         @map("external_id") @db.Text
@@ -21,6 +26,7 @@ model Transfer {
   expectedOn DateTime?      @map("expected_on") @db.Date
   status     StatusTransfer @default(Pending)
   createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamp()
+  type   Type
 
   @@map("transfers")
 }
