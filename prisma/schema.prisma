@@ -22,7 +22,7 @@ enum Type {
 model Transfer {
   id         String         @id @default(uuid()) @db.Uuid
   externalId String         @map("external_id") @db.Text
-  amount     Float          @db.DoublePrecision
+  amount     Decimal          @db.Decimal(precision: 10, scale: 2)
   expectedOn DateTime?      @map("expected_on") @db.Date
   status     StatusTransfer @default(Pending)
   createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamp()
