@@ -1,3 +1,4 @@
+import { Decimal } from "@prisma/client/runtime/library";
 import axios, { Axios, AxiosResponse } from "axios";
 
 type TransferType = "Entrada" | "Saida";
@@ -6,7 +7,7 @@ type TransferStatus = "Processing" | "Completed" | "Failed" | "Pending";
 
 interface TransferData {
   externalId: string;
-  amount: number;
+  amount: Decimal;
   expectedOn?: Date | null;
   type: TransferType;
   status: TransferStatus;

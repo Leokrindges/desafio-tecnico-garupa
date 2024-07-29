@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prismaConnection } from "../../database/prisma.connection";
 import { sendToLiquidationPlatform } from "../../services/liquidation.Service";
 import moment from "moment";
+import { Decimal } from "@prisma/client/runtime/library";
 
 export class TransferController {
   public static async create(req: Request, res: Response) {
