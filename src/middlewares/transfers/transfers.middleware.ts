@@ -13,10 +13,9 @@ export class CreateTransfersMiddleware {
       });
     }
     const dateFormated = moment(expectedOn, "DD/MM/YYYY");
-
-    if (
-      expectedOn &&
-      new Date(dateFormated.format("YYYY-MM-DD")) < new Date()
+    const dataa = new Date();
+    if (expectedOn &&
+       new Date(dateFormated.format("YYYY-MM-DD")) > new Date()
     ) {
       return res.status(400).json({
         ok: false,
