@@ -12,11 +12,10 @@ export class CreateTransfersMiddleware {
         message: "Tipo da transação inválida!",
       });
     }
-    const dateFormated = moment(expectedOn, "DD/MM/YYYY");
-    const dataa = new Date();
-    if (expectedOn &&
-       new Date(dateFormated.format("YYYY-MM-DD")) > new Date()
-    ) {
+    const dateFormated = moment(expectedOn, "DD/MM/YYYY").startOf('day'); 
+    const currentDate = moment().startOf('day'); 
+    
+    if (dateFormated.isBefore(currentDate)) {
       return res.status(400).json({
         ok: false,
         message: "Data de vencimento é menor que a data atual",
